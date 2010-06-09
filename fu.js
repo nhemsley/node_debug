@@ -2,6 +2,8 @@ var createServer = require("http").createServer;
 var readFile = require("fs").readFile;
 var sys = require("sys");
 var url = require("url");
+var fs = require("fs");
+var fspath = require("path");
 DEBUG = true;
 
 var fu = exports;
@@ -17,6 +19,8 @@ function notFound(req, res) {
 }
 
 var getMap = {};
+
+fu.getMap = getMap;
 
 fu.get = function (path, handler) {
   getMap[path] = handler;
@@ -94,6 +98,34 @@ fu.staticHandler = function (filename) {
       res.close();
     });
   }
+};
+
+fu.staticDir = function staticDir(prefix, path)
+{
+    fs.readdir(path, function(err, files)
+    {
+        if (err)
+        {
+            sys.puts("fu.StaticDir error for path " + path + ": " + err);
+            return;
+        }
+        var dirs = [];
+        for (var index in files)
+        {
+            var file = files[index];
+            var stat = fs.statSync(fspath.join(path, file));
+            if (stat.isFile())
+            {
+                sys.puts(fspath.join(prefix, file) + ", " + fspath.join(path, file))
+                fu.get(fspath.join(prefix, file), fu.staticHandler(fspath.join(path, file)));
+            }
+            else
+            {
+                if (file[0] != ".")
+                    staticDir(fspath.join(prefix, file), fspath.join(path, file));
+            }
+        }
+    });
 };
 
 // stolen from jack- thanks

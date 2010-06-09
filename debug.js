@@ -7,16 +7,11 @@ debug.listen = function (port, host) {
   fu.listen(port, host);
 };
 
+debug.fu = fu;
+
 var path = require("path");
+fu.staticDir("/", __dirname);
 fu.get("/", fu.staticHandler(path.join(__dirname, "index.html")));
-fu.get("/screen.css", fu.staticHandler(path.join(__dirname, "screen.css")));
-fu.get("/jquery.treeview.css", fu.staticHandler(path.join(__dirname, "jquery.treeview.css")));
-fu.get("/jquery.js", fu.staticHandler(path.join(__dirname, "jquery.js")));
-fu.get("/jquery.cookie.js", fu.staticHandler(path.join(__dirname, "jquery.cookie.js")));
-fu.get("/jquery.treeview.js", fu.staticHandler(path.join(__dirname, "jquery.treeview.js")));
-fu.get("/jquery.treeview.async.js", fu.staticHandler(path.join(__dirname, "jquery.treeview.async.js")));
-fu.get("/treeview-default.gif", fu.staticHandler(path.join(__dirname, "treeview-default.gif")));
-fu.get("/treeview-default-line.gif", fu.staticHandler(path.join(__dirname, "treeview-default-line.gif")));
 
 fu.get("/eval", function (req, res) {
   var uri = url.parse(req.url, true);
